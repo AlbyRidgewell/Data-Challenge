@@ -13,7 +13,7 @@ library(shiny)
 ui <- fluidPage(
 
     # Application title
-    titlePanel("Old Faithful Geyser Data"),
+    titlePanel("Heart Failure Clinical Data Analysis"),
 
     # Sidebar with a slider input for number of bins 
     sidebarLayout(
@@ -24,9 +24,15 @@ ui <- fluidPage(
         # Show a plot of the generated distribution
         mainPanel(
            plotOutput("distPlot"),
-           plotOutput("plot2")
+           plotOutput("plot2"),
+           #dataTableOutput("table")
         )
+    ),
+   fluidRow(column(12,
+             dataTableOutput("table")
+      )
     )
+   
 )
 
 # Define server logic required to draw a histogram
@@ -36,17 +42,18 @@ server <- function(input, output) {
   output$distPlot <- renderPlot({
         # generate bins based on input$bins from ui.R
         x    <- data0[, as.character(input$selectedCovariate)]
-        bins <- seq(min(x), max(x))
+        #bins <- seq(min(x), max(x))
 
         # draw the histogram with the specified number of bins
-        hist(x, breaks = bins, col = 'darkgray', border = 'white',
-             xlab = 'Waiting time to next eruption (in mins)',
-             main = 'Histogram of waiting times')
+        hist(x, col = 'darkgray', border = 'white',
+             xlab = as.character(input$selectedCovariate),
+             main = 'Histogram')
     })
         output$select_variable <- renderUI({
           selectInput("selectedCovariate","Please select a covariate",colnames(data0))
        
     })
+        output$table <- renderDataTable(data0)
         
 }
 
